@@ -1,0 +1,9 @@
+out/
+bin/
+doc/
+presets/
+
+*.mp3
+*.mp4
+*.webm
+*.avi
