@@ -7,3 +7,4 @@ presets/
 *.mp4
 *.webm
 *.avi
+!f1.mp3
