@@ -154,6 +154,10 @@ class YoutubeDownloader():
         filename_audio = self.current_stream.default_filename.replace(".webm", ".mp3")
         self.current_stream.download(output_path=out_path, filename=filename_audio)
 
+    def downloadMusicLowRes(self, out_path):
+        self.current_stream = self.singleYoutubeVideo.streams.order_by("itag").last()
+        self.current_stream.download(output_path=out_path)
+
     def downloadMusic(self):
 
         if self.args.link_type == "single":
@@ -164,20 +168,31 @@ class YoutubeDownloader():
 
         self.current_stream = self.singleYoutubeVideo.streams.filter(only_audio=True).order_by("itag").last()
 
-        self.current_stream.download(output_path=out_path)
+        try:
+            self.current_stream.download(output_path=out_path)
+
+        except AttributeError:
+            self.lowResVid = True
+            self.downloadMusicLowRes(out_path)
 
     def convertMusic(self):
 
         file_name = self.returnSafeFileName(self.current_stream.title)
 
         if self.args.link_type == "single":
+            if not self.lowResVid:
+                print(f"converting {file_name} ... ")
 
-            print(f"converting {file_name} ... ")
+                os.system(f'.\\bin\\ffmpeg -loglevel error -hide_banner -y -i ".\\{self.args.output}\\{file_name}.webm" -c:a flac ".\\{self.args.output}\\{file_name}.flac"')
 
-            os.system(f'.\\bin\\ffmpeg -loglevel error -hide_banner -y -i ".\\{self.args.output}\\{file_name}.webm" -c:a flac ".\\{self.args.output}\\{file_name}.flac"')
+                os.remove(f".\\{self.args.output}\\{file_name}.webm")
 
-            os.remove(f".\\{self.args.output}\\{file_name}.webm")
+            else:
+                print(f"converting {file_name} ... ")
 
+                os.system(f'.\\bin\\ffmpeg -loglevel error -hide_banner -y -i ".\\{self.args.output}\\{file_name}.mp4" -vn ".\\{self.args.output}\\{file_name}.mp3"')
+
+                os.remove(f".\\{self.args.output}\\{file_name}.mp4")
         else:
             print(f"converting {file_name} ... ")
 
