@@ -273,18 +273,32 @@ class YoutubeDownloader():
     def convertVideo(self):
         file_name = self.returnSafeFileName(self.current_stream.title)
 
+        prefix = self.utils._getPrefix()
+        options = " -loglevel error -hide_banner -y"
+        base = prefix + options
+
+        print(f"converting {file_name} ... ")
+
         if self.args.link_type == "single":
+            input_audio = self.utils._getPath(self.args.output, file_name + ".mp3")
+            input_video = self.utils._getPath(self.args.output, file_name + ".mp4")
+            out_options = "-c copy"
 
-            os.system(f'.\\bin\\ffmpeg -loglevel warning -hide_banner -i ".\\{self.args.output}\\{file_name}.mp3" -i ".\\{self.args.output}\\{file_name}.mp4" -c copy ".\\{self.args.output}\\{file_name}.mkv"')
-
-            os.remove(f".\\{self.args.output}\\{file_name}.mp3")
-            os.remove(f".\\{self.args.output}\\{file_name}.mp4")
+            out_file = self.utils._getPath(self.args.output, file_name + ".mkv")
 
         else:
-            os.system(f'.\\bin\\ffmpeg -loglevel warning -hide_banner -i ".\\{self.args.output}\\{self.output_playlist}\\{file_name}.mp3" -i ".\\{self.args.output}\\{self.output_playlist}\\{file_name}.mp4" -c copy ".\\{self.args.output}\\{self.output_playlist}\\{file_name}.mkv"')
+            input_audio = self.utils._getPath(self.args.output, file_name + ".mp3", [self.output_playlist])
+            input_video = self.utils._getPath(self.args.output, file_name + ".mp4", [self.output_playlist])
+            out_options = "-c copy"
 
-            os.remove(f".\\{self.args.output}\\{self.output_playlist}\\{file_name}.mp3")
-            os.remove(f".\\{self.args.output}\\{self.output_playlist}\\{file_name}.mp4")
+            out_file = self.utils._getPath(self.args.output, file_name + ".mkv", [self.output_playlist])
+
+        command = f"{base} -i '{input_audio}' -i '{input_video}' {out_options} '{out_file}'"
+
+        os.system(command)
+
+        os.remove(input_audio)
+        os.remove(input_video)
 
     def downloadSingle(self, videoID):
         link = f"https://www.youtube.com/watch?v={videoID}"
