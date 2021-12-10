@@ -243,8 +243,6 @@ class YoutubeDownloader():
     def downloadPlaylist(self, playlistID):
         link = f"https://www.youtube.com/playlist?list={playlistID}"
 
-        print (link)
-
         YouTubePlaylist = pytube.Playlist(link)
 
         self.output_playlist = self.returnSafeFileName(YouTubePlaylist.title)
