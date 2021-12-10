@@ -55,6 +55,51 @@ import re
  #
 #
 
+
+class PosixUtils():
+    @staticmethod
+    def _getPrefix():
+        return "ffmpeg"
+
+    @staticmethod
+    def _getPath(base, file, folder=list()):
+
+        if len(folder) < 1 :
+            path = f"./{base}/{file}"
+
+        else:
+            path = f"./{base}"
+
+            for f in folder:
+                path += f"/{f}"
+
+            path += f"/{file}"
+
+        return path
+
+class WindowsUtils():
+    @staticmethod
+    def _getPrefix():
+        return ".\\bin\\ffmpeg.exe"
+
+    @staticmethod
+    def _getPath(base, file, folder=list()):
+
+        if len(folder) < 1 :
+            path = f".\\{base}\\{file}"
+
+        else:
+            path = f".\\{base}"
+
+            for f in folder:
+                path += f"\\{f}"
+
+            path += f"\\{file}"
+
+        print(path)
+        return path
+
+
 class RegexChecker():
     """
         return string instead of list
@@ -78,6 +123,13 @@ class RegexChecker():
 class YoutubeDownloader():
 
     def __init__(self):
+        if os.name == "posix":
+            self.utils = PosixUtils()
+
+        else:
+            self.utils = WindowsUtils()
+
+
         self.lowResVid = False
         self.regex = RegexChecker()
 
@@ -180,34 +232,40 @@ class YoutubeDownloader():
 
         file_name = self.returnSafeFileName(self.current_stream.title)
 
+        prefix = self.utils._getPrefix()
+        options = " -loglevel error -hide_banner -y"
+        base = prefix + options
+
+        print(f"converting {file_name} ... ")
+
         if self.args.link_type == "single":
             if not self.lowResVid:
-                print(f"converting {file_name} ... ")
 
-                os.system(f'.\\bin\\ffmpeg -loglevel error -hide_banner -y -i ".\\{self.args.output}\\{file_name}.webm" -c:a flac ".\\{self.args.output}\\{file_name}.flac"')
-
-                os.remove(f".\\{self.args.output}\\{file_name}.webm")
+                input_file = self.utils._getPath(self.args.output, file_name + ".webm")
+                out_options = "-c:a flac"
+                out_file = self.utils._getPath(self.args.output, file_name + ".flac")
 
             else:
-                print(f"converting {file_name} ... ")
 
-                os.system(f'.\\bin\\ffmpeg -loglevel error -hide_banner -y -i ".\\{self.args.output}\\{file_name}.mp4" -vn ".\\{self.args.output}\\{file_name}.mp3"')
+                input_file = self.utils._getPath(self.args.output, file_name + ".mp4")
+                out_options = "-vn"
+                out_file = self.utils._getPath(self.args.output, file_name + ".mp3")
 
-                os.remove(f".\\{self.args.output}\\{file_name}.mp4")
         else:
             if not self.lowResVid:
-                print(f"converting {file_name} ... ")
-
-                os.system(f'.\\bin\\ffmpeg -loglevel error -hide_banner -y -i ".\\{self.args.output}\\{self.output_playlist}\\{file_name}.webm" -c:a flac ".\\{self.args.output}\\{self.output_playlist}\\{file_name}.flac"')
-
-                os.remove(f".\\{self.args.output}\\{self.output_playlist}\\{file_name}.webm")
+                input_file = self.utils._getPath(self.args.output, file_name + ".webm", [self.output_playlist])
+                out_options = "-c:a flac"
+                out_file = self.utils._getPath(self.args.output, file_name + ".flac", [self.output_playlist])
 
             else:
-                print(f"converting {file_name} ... ")
+                input_file = self.utils._getPath(self.args.output, file_name + ".mp4", [self.output_playlist])
+                out_options = "-vn"
+                out_file = self.utils._getPath(self.args.output, file_name + ".mp3", [self.output_playlist])
 
-                os.system(f'.\\bin\\ffmpeg -loglevel error -hide_banner -y -i ".\\{self.args.output}\\{self.output_playlist}\\{file_name}.mp4" -vn ".\\{self.args.output}\\{self.output_playlist}\\{file_name}.mp3"')
+        command = f"{base} -i '{input_file}' {out_options} '{out_file}'"
 
-                os.remove(f".\\{self.args.output}\\{self.output_playlist}\\{file_name}.mp4")
+        os.system(command)
+        os.remove(input_file)
 
         if self.args.sound:
             self.playF1Sound()
