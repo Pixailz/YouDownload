@@ -78,6 +78,7 @@ class RegexChecker():
 class YoutubeDownloader():
 
     def __init__(self):
+        self.lowResVid = False
         self.regex = RegexChecker()
 
         self.parseArgs()
@@ -194,11 +195,19 @@ class YoutubeDownloader():
 
                 os.remove(f".\\{self.args.output}\\{file_name}.mp4")
         else:
-            print(f"converting {file_name} ... ")
+            if not self.lowResVid:
+                print(f"converting {file_name} ... ")
 
-            os.system(f'.\\bin\\ffmpeg -loglevel error -hide_banner -y -i ".\\{self.args.output}\\{self.output_playlist}\\{file_name}.webm" -c:a flac ".\\{self.args.output}\\{self.output_playlist}\\{file_name}.flac"')
+                os.system(f'.\\bin\\ffmpeg -loglevel error -hide_banner -y -i ".\\{self.args.output}\\{self.output_playlist}\\{file_name}.webm" -c:a flac ".\\{self.args.output}\\{self.output_playlist}\\{file_name}.flac"')
 
-            os.remove(f".\\{self.args.output}\\{self.output_playlist}\\{file_name}.webm")
+                os.remove(f".\\{self.args.output}\\{self.output_playlist}\\{file_name}.webm")
+
+            else:
+                print(f"converting {file_name} ... ")
+
+                os.system(f'.\\bin\\ffmpeg -loglevel error -hide_banner -y -i ".\\{self.args.output}\\{self.output_playlist}\\{file_name}.mp4" -vn ".\\{self.args.output}\\{self.output_playlist}\\{file_name}.mp3"')
+
+                os.remove(f".\\{self.args.output}\\{self.output_playlist}\\{file_name}.mp4")
 
         if self.args.sound:
             self.playF1Sound()
