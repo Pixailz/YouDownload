@@ -1,4 +1,7 @@
 ## TODO
 
 - add downloader for ffmpeg
-- cross platformization :)
+- handle when privided link are not good (ex:
+  - music playlist https://youtube.com/watch?v=jahlwsbfhujbsdsdfn
+    - not a playlist link
+
