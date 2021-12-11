@@ -201,10 +201,12 @@ class YoutubeDownloader():
 
         self.current_stream = self.singleYoutubeVideo.streams.filter(only_video=True).order_by("itag").last()
         filename_video = self.current_stream.default_filename.replace(".webm", ".mp4")
+        self.download_mode = "video"
         self.current_stream.download(output_path=out_path, filename=filename_video)
 
         self.current_stream = self.singleYoutubeVideo.streams.filter(only_audio=True).order_by("itag").last()
         filename_audio = self.current_stream.default_filename.replace(".webm", ".mp3")
+        self.download_mode = "audio"
         self.current_stream.download(output_path=out_path, filename=filename_audio)
 
     def downloadMusicLowRes(self, out_path):
@@ -322,8 +324,7 @@ class YoutubeDownloader():
         for video_link in YouTubePlaylist.video_urls:
             self.downloadSingle(self.regex.getVideoID(video_link))
 
-    @staticmethod
-    def showProgressBar(bytes_received, filesize, filename, progressBarSize=10):
+    def showProgressBar(self, bytes_received, filesize, filename, progressBarSize=10):
         done = int(progressBarSize * bytes_received / filesize)
 
         str_full = "█" * done
@@ -331,7 +332,7 @@ class YoutubeDownloader():
 
         str_pourcentage = f"{int((bytes_received / filesize)*100)}%".ljust(4,)
 
-        str_progress = f"|{str_full}{str_void}|{str_pourcentage} {filename}\r"
+        str_progress = f"|{str_full}{str_void}|{str_pourcentage} {filename} ({self.download_mode})\r"
 
         print(f"{str_progress}", flush=True, end="")
 
@@ -339,10 +340,9 @@ class YoutubeDownloader():
         bytes_received = stream.filesize - bytes_remaining
         self.showProgressBar(bytes_received, stream.filesize, stream.default_filename.replace(".webm", ""))
 
-    @staticmethod
-    def completeFunction(stream, file_path, progressBarSize=10):
+    def completeFunction(self, stream, file_path, progressBarSize=10):
         str_full_progress = "█" * progressBarSize
-        print(f"|{str_full_progress}|100%", stream.default_filename.replace(".webm", ""))
+        print(f"|{str_full_progress}|100% {stream.default_filename.replace('.webm', '')} ({self.download_mode})")
 
     @staticmethod
     def returnSafeFileName(t):
