@@ -61,6 +61,7 @@ class PosixUtils():
 
         return path
 
+
 class WindowsUtils():
 
     def __init__(self):
@@ -294,6 +295,7 @@ class RegexChecker():
     @staticmethod
     def ffmpegRetrieveVersion(text):
         return re.findall(r'^ffmpeg version ([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})', text)[0]
+
 
 class YoutubeDownloader():
 
@@ -534,6 +536,5 @@ class YoutubeDownloader():
             time.sleep(.25)
 
 if __name__ == "__main__":
-    #downloader = YoutubeDownloader()
-    utils = WindowsUtils()
+    downloader = YoutubeDownloader()
 
