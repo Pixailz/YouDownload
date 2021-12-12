@@ -60,7 +60,7 @@ class PosixUtils():
 class WindowsUtils():
     @staticmethod
     def _getPrefix():
-        return ".\\bin\\ffmpeg.exe"
+        return ".\\ffmpeg\\bin\\ffmpeg.exe"
 
     @staticmethod
     def _getPath(base, file, folder=list()):
