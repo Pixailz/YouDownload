@@ -9,11 +9,13 @@ def installAndImportModule(package):
     """
 
     import sys
+    import contextlib
     import importlib
     import subprocess
 
     try:
-        importlib.import_module(package)
+        with contextlib.redirect_stdout(None):
+            importlib.import_module(package)
 
     except ModuleNotFoundError:
         print("module not found installing it")
@@ -22,32 +24,10 @@ def installAndImportModule(package):
     finally:
         globals()[package] = importlib.import_module(package)
 
-def installModule(package):
-    """ Check if module if present and install it
-    """
-
-    import sys
-    import importlib
-    import subprocess
-
-    try:
-        importlib.import_module(package)
-
-    except ModuleNotFoundError:
-        print("module not found installing it")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-
-installModule("pytube")
-installModule("pygame")
-
-import contextlib
-
-# import pygame without hello message spawning
-with contextlib.redirect_stdout(None):
-    from pygame import mixer
+installAndImportModule("pytube")
+installAndImportModule("pygame")
 
 import argparse
-import pytube
 import time
 import os
 import re
