@@ -247,6 +247,7 @@ class WindowsUtils():
                 self.ffmpegInstall(update=True)
 
         else:
+            print("[ffmpeg] not found installing...")
             self.ffmpegInstall()
             print("[ffmpeg] Installed")
 
