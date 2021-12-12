@@ -1,7 +1,6 @@
 out/
-bin/
-doc/
-presets/
+tmp/
+ffmpeg/
 
 *.mp3
 *.mp4
