@@ -100,6 +100,10 @@ class RegexChecker():
         """retrieve only number from a string"""
         return re.findall(r'[0-9]+', text)[0]
 
+    @staticmethod
+    def ffmpegRetrieveVersion(text):
+        return re.findall(r'^ffmpeg version ([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})', text)[0]
+
 class YoutubeDownloader():
 
     def __init__(self):
