@@ -392,7 +392,7 @@ class YoutubeDownloader():
         self.current_stream.download(output_path=out_path)
 
     def downloadMusic(self):
-
+        self.download_mode = "audio"
         if self.args.link_type == "single":
             out_path = self.args.output
 
