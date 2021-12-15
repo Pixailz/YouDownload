@@ -442,7 +442,7 @@ class YoutubeDownloader():
                 out_options = "-vn"
                 out_file = self.utils._getPath(self.args.output, file_name + ".mp3", [self.output_playlist])
 
-        command = f"{base} -i '{input_file}' {out_options} '{out_file}'"
+        command = f"{base} -i \"{input_file}\" {out_options} \"{out_file}\""
 
         os.system(command)
         os.remove(input_file)
