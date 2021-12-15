@@ -269,7 +269,6 @@ class WindowsUtils():
 
             path += f"\\{file}"
 
-        print(path)
         return path
 
 
